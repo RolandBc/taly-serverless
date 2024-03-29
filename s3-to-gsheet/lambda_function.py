@@ -172,11 +172,36 @@ def upload_cyber():
         result = append_data_to_google_sheets(spreadsheet_id, range_name, csv_data)
         print(f"Data transferred successfully to {range_name}: {result}")
 
+def upload_GEMA():
+    bucket_name = 'talyco-data'
+    spreadsheet_id = '1Xrx7da2SjGFGawHEpBHChjJ0F6_K2m7eGzNk9lZujMI'
+    
+    # List of tuples, each containing the file_key and the corresponding range_name
+    files_and_ranges = [
+        ('gema/data-processed/GEMA-source-sheet.csv', 'source-sheet'),
+        ('gema/data-processed/GEMA-campus-sheet.csv', 'campus-sheet'),
+        # Add more tuples here as needed
+    ]
+    
+    for file_key, range_name in files_and_ranges:
+        print(f"Clearing range {range_name}...")
+        clear_google_sheet(spreadsheet_id, range_name)
+
+        # Read and transform CSV data from S3
+        print(f"Updating range {range_name} with data from {file_key}...")
+        csv_data = read_csv_from_s3(bucket_name, file_key)
+        csv_data = transform_data_for_sheets(csv_data)
+        
+        # Append data to Google Sheets
+        result = append_data_to_google_sheets(spreadsheet_id, range_name, csv_data)
+        print(f"Data transferred successfully to {range_name}: {result}")
+
 def lambda_handler(event, context):
     # Exemple de noms de bucket et clé S3
     upload_ESI()
     upload_IA()
     upload_cyber()
+    upload_GEMA()
 
     return {
         'statusCode': 200,
