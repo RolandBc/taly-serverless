@@ -72,6 +72,7 @@ def transform_data_for_sheets(csv_data):
         for item in row:
             try:
                 # Attempt to convert the string to a float
+                item = item.replace(',', '.')
                 float_value = float(item)
                 # If the conversion succeeds but the float value is actually an integer, convert it to int to remove the decimal part
                 if float_value.is_integer():
@@ -94,97 +95,17 @@ def transform_data_for_sheets(csv_data):
         transformed_data.append(transformed_row)
     return transformed_data
 
-def upload_ESI():
+def upload_latournee():
     bucket_name = 'talyco-data'
-    spreadsheet_id = '1JCaWCKYW_l4jsvdeed6MJJJwgCAhA5gQjlSo3Xmj9Pw'
+    spreadsheet_id = '1hYu7bRzua_5VXjnc5l5ANGAX4zEBzJ000yCupLMewtc'
     
     # List of tuples, each containing the file_key and the corresponding range_name
     files_and_ranges = [
-        ('gema/data-processed/ESI-monitoring.csv', 'monitoring'),
-        ('gema/data-processed/ESI-campus-sheet.csv', 'campus-sheet'),
-        ('gema/data-processed/ESI-source-sheet.csv', 'source-sheet'),
-        ('gema/data-processed/ESI-media-sheet.csv', 'source-sheet'),
-        ('gema/data-processed/ESI-mastersheet.csv', 'mastersheet'),
-        # Add more tuples here as needed
-    ]
-    
-    for file_key, range_name in files_and_ranges:
-        print(f"Clearing range {range_name}...")
-        clear_google_sheet(spreadsheet_id, range_name)
-
-        # Read and transform CSV data from S3
-        print(f"Updating range {range_name} with data from {file_key}...")
-        csv_data = read_csv_from_s3(bucket_name, file_key)
-        csv_data = transform_data_for_sheets(csv_data)
-        
-        # Append data to Google Sheets
-        result = append_data_to_google_sheets(spreadsheet_id, range_name, csv_data)
-        print(f"Data transferred successfully to {range_name}: {result}")
-
-def upload_IA():
-    bucket_name = 'talyco-data'
-    spreadsheet_id = '1NRFK7xyHYvvczaZli-xDm0FyVsqnd_m0AjgxaIcPz0Q'
-    
-    # List of tuples, each containing the file_key and the corresponding range_name
-    files_and_ranges = [
-        ('gema/data-processed/IA-monitoring.csv', 'monitoring'),
-        ('gema/data-processed/IA-campus-sheet.csv', 'campus-sheet'),
-        ('gema/data-processed/IA-source-sheet.csv', 'source-sheet'),
-        ('gema/data-processed/IA-media-sheet.csv', 'source-sheet'),
-        ('gema/data-processed/IA-mastersheet.csv', 'mastersheet'),
-        # Add more tuples here as needed
-    ]
-    
-    for file_key, range_name in files_and_ranges:
-        print(f"Clearing range {range_name}...")
-        clear_google_sheet(spreadsheet_id, range_name)
-
-        # Read and transform CSV data from S3
-        print(f"Updating range {range_name} with data from {file_key}...")
-        csv_data = read_csv_from_s3(bucket_name, file_key)
-        csv_data = transform_data_for_sheets(csv_data)
-        
-        # Append data to Google Sheets
-        result = append_data_to_google_sheets(spreadsheet_id, range_name, csv_data)
-        print(f"Data transferred successfully to {range_name}: {result}")
-
-def upload_cyber():
-    bucket_name = 'talyco-data'
-    spreadsheet_id = '1l3CszsnsJf7gV_Qbrekv5uyfsv7URLhqbtjNuYzS3nk'
-    
-    # List of tuples, each containing the file_key and the corresponding range_name
-    files_and_ranges = [
-        ('gema/data-processed/cyber-monitoring.csv', 'monitoring'),
-        ('gema/data-processed/cyber-campus-sheet.csv', 'campus-sheet'),
-        ('gema/data-processed/cyber-source-sheet.csv', 'source-sheet'),
-        ('gema/data-processed/cyber-media-sheet.csv', 'source-sheet'),
-        ('gema/data-processed/cyber-mastersheet.csv', 'mastersheet'),
-        # Add more tuples here as needed
-    ]
-    
-    for file_key, range_name in files_and_ranges:
-        print(f"Clearing range {range_name}...")
-        clear_google_sheet(spreadsheet_id, range_name)
-
-        # Read and transform CSV data from S3
-        print(f"Updating range {range_name} with data from {file_key}...")
-        csv_data = read_csv_from_s3(bucket_name, file_key)
-        csv_data = transform_data_for_sheets(csv_data)
-        
-        # Append data to Google Sheets
-        result = append_data_to_google_sheets(spreadsheet_id, range_name, csv_data)
-        print(f"Data transferred successfully to {range_name}: {result}")
-
-def upload_GEMA():
-    bucket_name = 'talyco-data'
-    spreadsheet_id = '1Xrx7da2SjGFGawHEpBHChjJ0F6_K2m7eGzNk9lZujMI'
-    
-    # List of tuples, each containing the file_key and the corresponding range_name
-    files_and_ranges = [
-        ('gema/data-processed/GEMA-mastersheet.csv', 'mastersheet'),
-        ('gema/data-processed/GEMA-source-sheet.csv', 'source-sheet'),
-        ('gema/data-processed/GEMA-campus-sheet.csv', 'campus-sheet'),
-        ('gema/data-processed/GEMA-budget-sheet.csv', 'budget-sheet'),
+        ('latournee/data-processed/mastersheet-latournee.csv', 'mastersheet'),
+        ('latournee/data-processed/customersheet.csv', 'customer-sheet'),
+        ('latournee/data-processed/customersheet.csv', 'test'),
+        ('latournee/data-processed/transitionsheet.csv', 'transition-sheet'),
+        ('latournee/data-clean/trs-clean.csv', 'transactions'),
         # Add more tuples here as needed
     ]
     
@@ -203,10 +124,7 @@ def upload_GEMA():
 
 def lambda_handler(event, context):
     # Exemple de noms de bucket et clé S3
-    upload_ESI()
-    upload_IA()
-    upload_cyber()
-    upload_GEMA()
+    upload_latournee()
 
     return {
         'statusCode': 200,
