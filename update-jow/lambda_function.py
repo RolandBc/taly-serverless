@@ -96,17 +96,17 @@ def transform_data_for_sheets(csv_data):
         transformed_data.append(transformed_row)
     return transformed_data
 
-def upload_latournee():
+def upload_jow():
     bucket_name = 'talyco-data'
     spreadsheet_id = '1hYu7bRzua_5VXjnc5l5ANGAX4zEBzJ000yCupLMewtc'
     
     # List of tuples, each containing the file_key and the corresponding range_name
     files_and_ranges = [
-        ('latournee/data-processed/mastersheet-latournee.csv', 'mastersheet'),
-        ('latournee/data-processed/customersheet.csv', 'customer-sheet'),
-        ('latournee/data-processed/customersheet.csv', 'test'),
-        ('latournee/data-processed/transitionsheet.csv', 'transition-sheet'),
-        # ('latournee/data-clean/trs-clean.csv', 'transactions'),
+        ('jow/data-processed/mastersheet-jow.csv', 'mastersheet'),
+        # ('jow/data-processed/customersheet.csv', 'customer-sheet'),
+        # ('jow/data-processed/customersheet.csv', 'test'),
+        # ('jow/data-processed/transitionsheet.csv', 'transition-sheet'),
+        # ('jow/data-clean/trs-clean.csv', 'transactions'),
         # Add more tuples here as needed
     ]
     
@@ -125,7 +125,7 @@ def upload_latournee():
 
 def lambda_handler(event, context):
     try:
-        upload_latournee()
+        # upload_jow()
         return {
             'statusCode': 200,
             'body': 'Data transferred successfully to Google Sheets'

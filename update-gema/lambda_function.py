@@ -103,7 +103,7 @@ def upload_ESI():
         ('gema/data-processed/ESI-monitoring.csv', 'monitoring'),
         ('gema/data-processed/ESI-campus-sheet.csv', 'campus-sheet'),
         ('gema/data-processed/ESI-source-sheet.csv', 'source-sheet'),
-        ('gema/data-processed/ESI-media-sheet.csv', 'source-sheet'),
+        ('gema/data-processed/ESI-media-sheet.csv', 'media-sheet'),
         ('gema/data-processed/ESI-mastersheet.csv', 'mastersheet'),
         # Add more tuples here as needed
     ]
@@ -130,7 +130,7 @@ def upload_IA():
         ('gema/data-processed/IA-monitoring.csv', 'monitoring'),
         ('gema/data-processed/IA-campus-sheet.csv', 'campus-sheet'),
         ('gema/data-processed/IA-source-sheet.csv', 'source-sheet'),
-        ('gema/data-processed/IA-media-sheet.csv', 'source-sheet'),
+        ('gema/data-processed/IA-media-sheet.csv', 'media-sheet'),
         ('gema/data-processed/IA-mastersheet.csv', 'mastersheet'),
         # Add more tuples here as needed
     ]
@@ -157,7 +157,7 @@ def upload_cyber():
         ('gema/data-processed/cyber-monitoring.csv', 'monitoring'),
         ('gema/data-processed/cyber-campus-sheet.csv', 'campus-sheet'),
         ('gema/data-processed/cyber-source-sheet.csv', 'source-sheet'),
-        ('gema/data-processed/cyber-media-sheet.csv', 'source-sheet'),
+        ('gema/data-processed/cyber-media-sheet.csv', 'media-sheet'),
         ('gema/data-processed/cyber-mastersheet.csv', 'mastersheet'),
         # Add more tuples here as needed
     ]
@@ -185,6 +185,8 @@ def upload_GEMA():
         ('gema/data-processed/GEMA-source-sheet.csv', 'source-sheet'),
         ('gema/data-processed/GEMA-campus-sheet.csv', 'campus-sheet'),
         ('gema/data-processed/GEMA-budget-sheet.csv', 'budget-sheet'),
+        ('gema/data-processed/GEMA-media-sheet.csv', 'media-sheet'),
+        ('gema/data-processed/GEMA-canceled-sheet.csv', 'canceled-sheet'),
         # Add more tuples here as needed
     ]
     
@@ -202,15 +204,43 @@ def upload_GEMA():
         print(f"Data transferred successfully to {range_name}: {result}")
 
 def lambda_handler(event, context):
-    # Exemple de noms de bucket et clé S3
-    upload_ESI()
-    upload_IA()
-    upload_cyber()
-    upload_GEMA()
+    # Initialize the path parameter to None
+    path_param = None
+
+    # Check if pathParameters exists and has 'param'
+    if 'pathParameters' in event and 'school' in event['pathParameters']:
+        path_param = event['pathParameters']['school']
+
+    # Call the appropriate upload function based on the path parameter
+    if path_param == 'all':
+        upload_ESI()
+        upload_IA()
+        upload_cyber()
+        upload_GEMA()
+        return {
+            'statusCode': 200,
+            'body': f'Data transferred successfully to Google Sheets for {path_param}'
+        }
+    elif path_param == 'esi':
+        upload_ESI()
+    elif path_param == 'ia':
+        upload_IA()
+    elif path_param == 'cyber':
+        upload_cyber()
+    elif path_param == 'gema':
+        upload_GEMA()
+    elif path_param == 'test':
+        return {
+            'statusCode': 200,
+            'body': f'Talyco serverless test route working properly: {path_param}'
+        }
+    else:
+        return {
+            'statusCode': 400,
+            'body': f'Invalid path parameter: {path_param} - {event['pathParameters']}'
+        }
 
     return {
         'statusCode': 200,
-        'body': 'Data transferred successfully to Google Sheets'
+        'body': f'Data transferred successfully to Google Sheets for {path_param}'
     }
-
-print("It's working!")
